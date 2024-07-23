@@ -176,7 +176,7 @@ public class MineSweeper {
             }
         }
         for(int i = MainLand.length - 1; i >= 0; i = i-1){
-            for(int j = MainLand.length - 1; j >= 0; j = j-1){
+            for(int j = MainLand[i].length - 1; j >= 0; j = j-1){
                 if(tempLand[i][j].equals("0")){
                     openZero(MainLand, i, j);
                     if(checkZero(tempLand, i, j) == true){
