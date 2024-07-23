@@ -101,6 +101,59 @@ public class MineSweeper {
         return count;
     }
 
+    public void checkZero(String land[][], int i, int j){
+        if(i > 0 && j > 0){
+            this.tempLand[i - 1][j - 1] = String.valueOf(howMuchBomb(land, i - 1, j - 1));
+            this.winLand[i - 1][j - 1] = String.valueOf(howMuchBomb(land, i - 1, j - 1));
+        }
+        if(i > 0){
+            this.tempLand[i - 1][j] = String.valueOf(howMuchBomb(land, i - 1, j));
+            this.winLand[i - 1][j] = String.valueOf(howMuchBomb(land, i - 1, j));
+        }
+        if(i > 0 && j < (col - 1)){
+            this.tempLand[i - 1][j + 1] = String.valueOf(howMuchBomb(land, i - 1, j + 1));
+            this.winLand[i - 1][j + 1] = String.valueOf(howMuchBomb(land, i - 1, j + 1));
+        }
+        if(j > 0){
+            this.tempLand[i][j - 1] = String.valueOf(howMuchBomb(land, i, j - 1));
+            this.winLand[i][j - 1] = String.valueOf(howMuchBomb(land, i, j - 1));
+        }
+        if(j < (col - 1)){
+            this.tempLand[i][j + 1] = String.valueOf(howMuchBomb(land, i, j + 1));
+            this.winLand[i][j + 1] = String.valueOf(howMuchBomb(land, i, j + 1));
+        }
+        if(i < (row - 1) && j > 0){
+            this.tempLand[i + 1][j - 1] = String.valueOf(howMuchBomb(land, i + 1, j - 1));
+            this.winLand[i + 1][j - 1] = String.valueOf(howMuchBomb(land, i + 1, j - 1));
+        }
+        if(i < (row - 1)){
+            this.tempLand[i + 1][j] = String.valueOf(howMuchBomb(land, i + 1, j));
+            this.winLand[i + 1][j] = String.valueOf(howMuchBomb(land, i + 1, j));
+        }
+        if( j < (col - 1) && i < (row - 1)){
+            this.tempLand[i + 1][j + 1] = String.valueOf(howMuchBomb(land, i + 1, j + 1));
+            this.winLand[i + 1][j + 1] = String.valueOf(howMuchBomb(land, i + 1, j + 1));
+        }
+    }
+
+    public boolean checkFlagInput(int input){
+        while(input < 1 || input > 2){
+            System.out.println("wrong input!!");
+            System.out.println("Try again");
+        }
+
+        if(input == 1){
+            return true;
+        }
+
+        if(input == 2){
+            return false;
+        }
+        else{
+            return false;
+        }
+    }
+
     public boolean checkWin(String land[][]){
         for(int i = 0; i < row; i++){
             for(int j = 0; j < col; j++){
@@ -117,10 +170,20 @@ public class MineSweeper {
         winLand = MainLand;
         createtempLand();
         boolean isLose = false;
+        System.out.println("==========================");
+        System.out.println("There is " + bombRate() + " bombs consists");
 
         while(!isLose){
             System.out.println("==========================");
             printLand(tempLand);
+
+            System.out.println("Put flag ? \n 1 : true \n 2 : false");
+            int flagInput = input.nextInt();
+            if(flagInput < 1 || flagInput > 2){
+                System.out.println("Invalid value !!");
+                continue;
+            }
+
             System.out.print("Enter row : ");
             int temprow = input.nextInt() - 1;
             if(temprow < 0 || temprow >= row){
@@ -134,9 +197,23 @@ public class MineSweeper {
                 continue;
             }
 
+            if(checkFlagInput(flagInput) == true){
+                if(tempLand[temprow][tempcol] == "-"){
+                    tempLand[temprow][tempcol] = "|";
+                    continue;
+                }
+                else{
+                    System.out.println("You cannot put flag here !!");
+                }
+                
+            }
+
             if(MainLand[temprow][tempcol] != "*"){
                 tempLand[temprow][tempcol] = String.valueOf(howMuchBomb(MainLand, temprow, tempcol));
                 winLand[temprow][tempcol] = String.valueOf(howMuchBomb(MainLand, temprow, tempcol));
+                if(howMuchBomb(MainLand, temprow, tempcol) == 0){
+                    checkZero(MainLand,temprow,tempcol);
+                }
             }
             else if(MainLand[temprow][tempcol] == "*"){
                 isLose = true;
