@@ -101,7 +101,7 @@ public class MineSweeper {
         return count;
     }
 
-    public void checkZero(String land[][], int i, int j){
+    public void openZero(String land[][], int i, int j){
         if(i > 0 && j > 0){
             this.tempLand[i - 1][j - 1] = String.valueOf(howMuchBomb(land, i - 1, j - 1));
             this.winLand[i - 1][j - 1] = String.valueOf(howMuchBomb(land, i - 1, j - 1));
@@ -133,6 +133,57 @@ public class MineSweeper {
         if( j < (col - 1) && i < (row - 1)){
             this.tempLand[i + 1][j + 1] = String.valueOf(howMuchBomb(land, i + 1, j + 1));
             this.winLand[i + 1][j + 1] = String.valueOf(howMuchBomb(land, i + 1, j + 1));
+        }
+    }
+
+    public boolean checkZero(String land[][], int i, int j){
+        if(i > 0 && j > 0 && land[i - 1][j - 1] == "0"){
+            return true;
+        }
+        if(i > 0 && land[i - 1][j] == "0"){
+            return true;
+        }
+        if(i > 0 && j < (col - 1) && land[i - 1][j + 1] == "0"){
+            return true;
+        }
+        if(j > 0 && land[i][j - 1] == "0"){
+            return true;
+        }
+        if(j < (col - 1) && land[i][j + 1] == "0"){
+            return true;
+        }
+        if(i < (row - 1) && j > 0 && land[i + 1][j - 1] == "0"){
+            return true;
+        }
+        if(i < (row - 1) && land[i + 1][j] == "0"){
+            return true;
+        }
+        if( j < (col - 1) && i < (row - 1) && land[i + 1][j + 1] == "0"){
+            return true;
+        }
+        return false;
+    }
+
+    public void checkAllZero(){
+        for(int i = 0; i < MainLand.length; i++){
+            for(int j = 0; j < MainLand[i].length; j++){
+                if(tempLand[i][j].equals("0")){
+                    openZero(MainLand, i, j);
+                    if(checkZero(tempLand, i, j) == true){
+                        checkAllZero();
+                    }
+                }
+            }
+        }
+        for(int i = MainLand.length - 1; i >= 0; i = i-1){
+            for(int j = MainLand.length - 1; j >= 0; j = j-1){
+                if(tempLand[i][j].equals("0")){
+                    openZero(MainLand, i, j);
+                    if(checkZero(tempLand, i, j) == true){
+                        checkAllZero();
+                    }
+                }
+            }
         }
     }
 
@@ -177,7 +228,7 @@ public class MineSweeper {
             System.out.println("==========================");
             printLand(tempLand);
 
-            System.out.println("Put flag ? \n 1 : true \n 2 : false");
+            System.out.println("Put flag ? \n1 : true \n2 : false");
             int flagInput = input.nextInt();
             if(flagInput < 1 || flagInput > 2){
                 System.out.println("Invalid value !!");
@@ -212,7 +263,8 @@ public class MineSweeper {
                 tempLand[temprow][tempcol] = String.valueOf(howMuchBomb(MainLand, temprow, tempcol));
                 winLand[temprow][tempcol] = String.valueOf(howMuchBomb(MainLand, temprow, tempcol));
                 if(howMuchBomb(MainLand, temprow, tempcol) == 0){
-                    checkZero(MainLand,temprow,tempcol);
+                    openZero(MainLand,temprow,tempcol);
+                    checkAllZero();
                 }
             }
             else if(MainLand[temprow][tempcol] == "*"){
